@@ -34,6 +34,7 @@ module Spree
       end
 
       def update
+        remove_password_on_empty
         if @user.update_attributes(user_params)
           set_roles
           set_stock_locations
@@ -121,6 +122,13 @@ module Spree
         end
 
         params.require(:user).permit(attributes)
+      end
+
+      def remove_password_on_empty
+        if params[:user][:password].blank? && params[:user][:password_confirmation].blank?
+          params[:user].delete(:password)
+          params[:user].delete(:password_confirmation)
+        end
       end
 
       # handling raise from Spree::Admin::ResourceController#destroy
